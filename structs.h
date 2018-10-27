@@ -28,9 +28,12 @@ typedef struct s_maze_data
     int col;
     int start[2];
     int only_start;
+    int current;
+    int last_point;
     t_point *que;
     t_point *new_point;
     t_point **maze;
+    int max_que;
 }                t_maze_data;
 
 #endif

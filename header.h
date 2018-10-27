@@ -21,5 +21,6 @@ void print_map(t_maze_data *data);
 
 int solve_maze(t_maze_data *data);
 void    check_neighbors(t_point *point, t_maze_data *data);
+void malloc_que(t_maze_data *data);
 
 #endif

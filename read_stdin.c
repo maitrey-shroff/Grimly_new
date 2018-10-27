@@ -50,7 +50,7 @@ int read_first_line_of_fd(t_maze_data *data) //(add int fd) param
 void test_me(t_maze_data *data)
 {
     printf(
-        "obstacle: %c\nempty: %c\npath: %c\nentry: %c\next: %c\nrow: %i\ncol: %i\nstart: %d, %d",
+        "obstacle: %c\nempty: %c\npath: %c\nentry: %c\next: %c\nrow: %i\ncol: %i\nstart: (%d, %d)\n",
         data->obstacle, data->empty, data->path, data->entry, data->ext,
         data->row, data->col, data->start[0], data->start[1]);
 }
@@ -68,6 +68,8 @@ void initialize_data(t_maze_data *data)
     data->new_point = NULL;
     data->maze = NULL;
     data->only_start = 1;
+    data->current = 0;
+    data->last_point = 0;
 }
     
 int stdin_maze(t_maze_data *data)
@@ -77,7 +79,7 @@ int stdin_maze(t_maze_data *data)
     if (!(read_full_maze(data)))
         return (0);
     print_map(data);
-    // test_me(data);
+    test_me(data);
     return (1);
 }
 
@@ -90,5 +92,5 @@ int main(void)
     initialize_data(data); //initialize data
     if (!(stdin_maze(data)))
         printf("ERROR\n Youfucked up");
-    // solve_maze(data);
+    solve_maze(data);
 }
