@@ -2,19 +2,18 @@
 #define STRUCTS_H
 #include <stdio.h>  //printf
 #include <stdlib.h> //atoi
-#include <string.h> //strchr / strndup
+#include <string.h> //strchr // strndup //memset
 #include <zconf.h>
 #include <fcntl.h>
 
 
 typedef struct s_point
 {
-    int i;
     int visited;
     char type;
     int x;
     int y;
-    enum {entry, ext, empty, obstacle} e_type;
+    struct s_point *last;
 }   t_point;
 
 typedef struct s_maze_data
@@ -30,10 +29,12 @@ typedef struct s_maze_data
     int only_start;
     int current;
     int last_point;
-    t_point *que;
+    t_point **que;
     t_point *new_point;
-    t_point **maze;
+    t_point ***maze;
     int max_que;
+    int can_exit;
+    int steps;
 }                t_maze_data;
 
 #endif

@@ -5,12 +5,11 @@ void get_start_point(t_maze_data *data, int y, int x)
 {
     data->start[0] = y;
     data->start[1] = x;
-    data->only_start = 0;
+    data->only_start += 1;
 }
 
 int check_eol(int *x, int *y, t_maze_data *data)
 {
-    // printf("%i:  %i:\n", *x, data->col);
     if ((*x) == data->col)
     {
         *x = 0;
@@ -18,7 +17,17 @@ int check_eol(int *x, int *y, t_maze_data *data)
         return (1);
     }
     return (0);
-    
+}
+
+int check_char(char ch, t_maze_data *data)
+{
+    if (ch == data->entry || ch == data->ext)
+        return (1);
+    if (ch == data->path || ch == data->obstacle)
+        return (1);
+    if (ch == data->empty || ch == '\n')
+        return (1);
+    return (0);
 }
 
 int fill_maze(t_maze_data *data, char *buff)
@@ -30,11 +39,12 @@ int fill_maze(t_maze_data *data, char *buff)
     y = 0;
     while (*buff)
     {
-        if ((*buff == data->entry) && !(data->only_start))
-            return (0);
         if (*buff == data->entry)
             get_start_point(data, y, x);
-        //check if it's also a valid mark at each point
+        if ((*buff == data->entry) && (data->only_start == 2))
+            return (0);
+        if (!(check_char(*buff, data)))
+            return (0);
         if (*buff == '\n')
         {
             if (!(check_eol(&x, &y, data)))
@@ -43,29 +53,20 @@ int fill_maze(t_maze_data *data, char *buff)
         }
         if (!(create_point(*buff, data, y, x)))
             return (0);
-        data->maze[y][x] = *(data->new_point);
+        if (x <= data->col)
+            data->maze[y][x] = data->new_point;
+        else
+            return (0);
         x++;
         if (*buff)
             buff++;
     }
-    return (1);
+    if (data->only_start == 1)
+        return (1);
+    return (0);
 }
 
-int malloc_maze(t_maze_data *data)
-{
-    if (!(data->maze = malloc(sizeof(t_point) * data->row)))
-        return (0);
-    int n = 0;
-    while (n <= data->row)
-    {
-        if (!(data->maze[n] = malloc(sizeof(t_point) * data->col)))
-            return (0);
-        n++;
-    }
-    return (1);
-}
-
-int read_full_maze(t_maze_data *data)
+int read_full_maze(t_maze_data *data, int fd)
 {
     ssize_t size;
 
@@ -74,7 +75,7 @@ int read_full_maze(t_maze_data *data)
         return (0);
     if (!(buff = malloc(sizeof(char) * size + 1)))
         return (0);
-    if (read(0, buff, size) < 0)
+    if (read(fd, buff, size) < 0)
         return (0);
     buff[size] = '\0';
     if (!(malloc_maze(data)))
